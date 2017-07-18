@@ -9,6 +9,7 @@ namespace BagOLoot
 {
     public class DatabaseInterface
     {
+            //format for connecting to a SQLite database
         private string _connectionString = $"Data Source={Environment.GetEnvironmentVariable("BAGOLOOT_DB")}";
         private SqliteConnection _connection;
 
