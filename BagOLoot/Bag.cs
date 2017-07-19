@@ -7,6 +7,7 @@ namespace BagOLoot
 {
     public class Bag
     {
-
+        private 
+        private string _connectionString = $"Data Source={Environment.GetEnvironmentVariable("BAGOLOOT_DB")}";
     }
 }

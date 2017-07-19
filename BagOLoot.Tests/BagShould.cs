@@ -15,7 +15,8 @@ namespace BagOLoot.Tests
 
         public void AddItemToBag(string item)
         {
-            
+            string itemToAdd = _bag.AddItem(item);
+            Assert.Equal(itemToAdd, item);
         }
     }
 }
