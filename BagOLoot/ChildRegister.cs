@@ -48,6 +48,29 @@ namespace BagOLoot
             return _lastId != 0;
         }
 
+        // //method will return a list of toyIds in a given childs list
+        // public List<int> GetChildToyList(int childId)
+        // {
+        //     // return new List<int>(){1, 2, 3, 4};
+        //     using(_connection)
+        //     {
+        //         _connection.Open();
+        //         SqliteCommand dbcmd = _connection.CreateCommand();
+
+        //         dbcmd.CommandText = $"select toyId, name from child";
+        //         using (SqliteDataReader dr = dbcmd.ExecuteReader())
+        //         {
+        //             while (dr.Read())
+        //             {
+        //                 _childToyList.Add(dr[1].ToString());
+        //             }
+        //         }
+        //         dbcmd.Dispose();
+        //         _connection.Close;
+
+        //     } 
+        // }
+
         public List<string> GetChildren ()
         {
             return new List<string>();

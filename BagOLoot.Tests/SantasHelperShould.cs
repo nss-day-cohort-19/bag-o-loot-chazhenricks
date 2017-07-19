@@ -22,13 +22,15 @@ namespace BagOLoot.Tests
             Assert.IsType<List<int>>(ChildToyList);
         }
 
-        [Fact]
-        public void ToyAddedToBagShouldBeItemAdded()
+        
+        [Theory]
+        [InlineData("Skateboard")]
+        [InlineData("Ball")]
+        [InlineData("Tonka Truck")]        
+        public void ToyAddedToBagShouldBeItemAdded(string toyName)
         {
-            //Name of toy to add
-            string toyName = "Skateboard";
             //id of child to add toy to
-            int childId = 715;
+            int childId = 1;
             //returns toyId of the new toy we added
             int itemToAdd = _santasHelper.AddItemToBag(toyName, childId);
             //returns the list of children
