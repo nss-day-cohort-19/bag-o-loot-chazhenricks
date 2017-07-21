@@ -12,7 +12,7 @@ namespace BagOLoot
         private SqliteConnection _connection;
         // private List<int> _childToyList;
 
-                public SantasHelper()
+        public SantasHelper()
         {
             _connection = new SqliteConnection(_connectionString);
         }
@@ -21,9 +21,6 @@ namespace BagOLoot
         public int AddItemToBag(string toyName, int childId)
         {   
             //when toy is created and added to child bag, return toyId
-            // int toyId = 5;
-            // return toyId;
-
             int _toyId = 0;
             using (_connection)
             {
@@ -56,27 +53,119 @@ namespace BagOLoot
 
         public void RemoveItemFromBag(int toyId, int childId)
         {
-            
+            try
+            {
+                using(_connection)
+                {
+                    _connection.Open();
+                    SqliteCommand dbcmd = _connection.CreateCommand ();
+
+                    // Remove row from server database on toyId
+                    dbcmd.CommandText = $"DELETE FROM toy where toyId = '{toyId}'";
+                    Console.WriteLine(dbcmd.CommandText);
+                    dbcmd.ExecuteNonQuery ();
+
+                    // clean up
+                    dbcmd.Dispose ();
+                    _connection.Close ();
+                }
+            }
+            catch (Microsoft.Data.Sqlite.SqliteException ex)
+            {
+            Console.WriteLine("An Error Occurred: " + ex.Message);
+            }
+
         }
 
-        public List<int> GetChildToyList(int childId)
+        //will return a list of ints that contain the ids of the toys a child is going to receive. 
+        public List<Toy> GetChildToyList(int childId)
         {
-            return new List<int>(){1, 2, 3, 4};
+            List<Toy> childToyList = new List<Toy>();
+
+            using(_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
+
+                dbcmd.CommandText = $"select toyId, name , childId from toy where childId = '{childId}'";
+                using (SqliteDataReader dr = dbcmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        childToyList.Add(new Toy(dr.GetInt32(0), dr[1].ToString(), dr.GetInt32(2)));
+                    }
+                }
+                dbcmd.Dispose();
+                _connection.Close();
+
+            } 
+
+            return childToyList;
         }
 
         //will return a list of strings children who are going to receive toys
-        public List<string> GetChildrenWhoGetToys()
+        public List<Child> GetChildrenWhoGetToys()
         {
-            return new List<string>(){"Steve", "Chaz", "AARON"};
+            List<Child> totalChildrenGettingToys = new List<Child>();
+            using (_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand ();
+
+                dbcmd.CommandText = $@"SELECT c.childId, c.name, c.delivered
+                                    FROM child c 
+                                    INNER JOIN toy t 
+                                    ON c.childId = t.childId
+                                     GROUP BY c.name;";
+                using (SqliteDataReader dr = dbcmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        totalChildrenGettingToys.Add(new Child(dr.GetInt32(0), dr[1].ToString(), dr.GetInt32(2)));
+                    }
+                }
+                dbcmd.Dispose();
+                _connection.Close();
+            }
+
+            List<Child> childrenGettingToys = new List<Child>();
+            foreach(Child child in totalChildrenGettingToys){
+                if(childrenGettingToys.Equals(child.ChildId))
+                {
+
+                }else
+                {
+                    childrenGettingToys.Add(child);
+                }
+            }
+            return childrenGettingToys;
         }
 
         //given a childId, will return if that childs toys have been delivered.
         public bool ChildDeliveryStatus(int childId)
         {
-            return true;
+            int deliveryStatus = 0;
+            using(_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand ();
+
+                dbcmd.CommandText = $"select delivered from child where childId = '{childId}'";
+                using (SqliteDataReader dr = dbcmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        deliveryStatus = (dr.GetInt32(0));
+                    }
+                }
+                dbcmd.Dispose();
+                _connection.Close();
+
+            } 
+            return deliveryStatus != 0;
         }
 
-        
-    
     }
+
+    
 }

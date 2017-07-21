@@ -7,7 +7,7 @@ namespace BagOLoot
 {
     public class ChildRegister
     {
-        private List<string> _children = new List<string>();
+        private List<Child> _children = new List<Child>();
         private string _connectionString = $"Data Source={Environment.GetEnvironmentVariable("BAGOLOOT_DB")}";
         private SqliteConnection _connection;
 
@@ -48,41 +48,37 @@ namespace BagOLoot
             return _lastId != 0;
         }
 
-        // //method will return a list of toyIds in a given childs list
-        // public List<int> GetChildToyList(int childId)
+
+        public List<Child> GetChildren ()
+        {
+            // return new List<string>();
+            using(_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand();
+
+                dbcmd.CommandText = $"select childId, name , delivered from child";
+                using (SqliteDataReader dr = dbcmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        _children.Add(new Child(dr.GetInt32(0), dr[1].ToString(), dr.GetInt32(2)));
+                    }
+                }
+                dbcmd.Dispose();
+                _connection.Close();
+
+            } 
+            return _children;
+        }
+
+        // public string GetChild (string name)
         // {
-        //     // return new List<int>(){1, 2, 3, 4};
-        //     using(_connection)
-        //     {
-        //         _connection.Open();
-        //         SqliteCommand dbcmd = _connection.CreateCommand();
+        //     var child = _children.SingleOrDefault(c => c == name);
 
-        //         dbcmd.CommandText = $"select toyId, name from child";
-        //         using (SqliteDataReader dr = dbcmd.ExecuteReader())
-        //         {
-        //             while (dr.Read())
-        //             {
-        //                 _childToyList.Add(dr[1].ToString());
-        //             }
-        //         }
-        //         dbcmd.Dispose();
-        //         _connection.Close;
+        //     // Inevitably, two children will have the same name. Then what?
 
-        //     } 
+        //     return child;
         // }
-
-        public List<string> GetChildren ()
-        {
-            return new List<string>();
-        }
-
-        public string GetChild (string name)
-        {
-            var child = _children.SingleOrDefault(c => c == name);
-
-            // Inevitably, two children will have the same name. Then what?
-
-            return child;
-        }
     }
 }
