@@ -7,9 +7,11 @@ namespace BagOLoot.Tests
     public class SantasHelperShould
     {
         private SantasHelper _santasHelper;
+        private ChildRegister _register;
         public SantasHelperShould()
         {
             _santasHelper = new SantasHelper();
+            _register = new ChildRegister();
         }
 
 
@@ -74,11 +76,6 @@ namespace BagOLoot.Tests
        {
            List<Child> childrenToReceiveToys = _santasHelper.GetChildrenWhoGetToys();
            
-           foreach(Child child in childrenToReceiveToys)
-           {
-                Console.WriteLine(child);
-           }
-
            Assert.IsType<List<Child>>(childrenToReceiveToys);
        }
 
@@ -92,6 +89,18 @@ namespace BagOLoot.Tests
            bool deliveryStatus = _santasHelper.ChildDeliveryStatus(childId);
 
            Assert.False(deliveryStatus);
+       }
+
+
+        [Fact]
+       public void ChangeChildsDeliveryStatus()
+       {
+            int childId = 2;
+            string name = "Eliza"; 
+            _santasHelper.ChangeDeliveryStatus(childId, name);
+            Child deliveryChild = _register.GetSingleChild(childId);
+            Console.WriteLine($"{deliveryChild.ChildId} {deliveryChild.Name} {deliveryChild.Delivered}");
+            Assert.Equal(1, 1);
        }
     }
 }

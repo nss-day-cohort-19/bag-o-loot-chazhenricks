@@ -13,7 +13,7 @@ namespace BagOLoot
             Console.WriteLine ("2. Assign a toy to a child");
             Console.WriteLine ("3. Revoke a toy from a child");
             Console.WriteLine ("4. Review a child's toy list");
-            Console.WriteLine ("5. Child toy delivery complete");
+            Console.WriteLine ("5. Child toy delivery status");
             Console.WriteLine ("6. Yuletime delivery report");
             Console.WriteLine ("7. Exit");
 			Console.Write ("> ");

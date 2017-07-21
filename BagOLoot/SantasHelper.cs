@@ -10,7 +10,6 @@ namespace BagOLoot
         //establishes connection to Database
         private string _connectionString = $"Data Source={Environment.GetEnvironmentVariable("BAGOLOOT_DB")}";
         private SqliteConnection _connection;
-        // private List<int> _childToyList;
 
         public SantasHelper()
         {
@@ -165,7 +164,20 @@ namespace BagOLoot
             return deliveryStatus != 0;
         }
 
-    }
+        public void ChangeDeliveryStatus(int childId, string name)
+        {
+            using(_connection)
+            {
+                _connection.Open();
+                SqliteCommand dbcmd = _connection.CreateCommand ();
 
-    
+                dbcmd.CommandText = $"UPDATE child SET childId = {childId}, name = '{name}', delivered = 1 WHERE childId = {childId}";
+                dbcmd.ExecuteNonQuery ();
+
+                dbcmd.Dispose();
+                _connection.Close();
+
+            } 
+        }
+    }    
 }

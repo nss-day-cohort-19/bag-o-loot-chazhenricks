@@ -72,13 +72,30 @@ namespace BagOLoot
             return _children;
         }
 
-        // public string GetChild (string name)
-        // {
-        //     var child = _children.SingleOrDefault(c => c == name);
+        public Child GetSingleChild(int childId)
+        {
+            Child singleChild = new Child(childId, "", 0);
+           
+           using(_connection)
+           {
+               _connection.Open();
+               SqliteCommand dbcmd = _connection.CreateCommand();
 
-        //     // Inevitably, two children will have the same name. Then what?
+               dbcmd.CommandText = $"select childId, name, delivered from child where childId = '{childId}'";
+               using (SqliteDataReader dr = dbcmd.ExecuteReader())
+               {
+                   while (dr.Read())
+                   {
+                       singleChild.ChildId = dr.GetInt32(0);
+                       singleChild.Name = dr[1].ToString();
+                       singleChild.Delivered =  dr.GetInt32(2);
+                   }
+               }
+                dbcmd.Dispose();
+                _connection.Close();
+           }
+           return singleChild;
+        }
 
-        //     return child;
-        // }
     }
 }
